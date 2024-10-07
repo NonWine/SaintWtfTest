@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 
-public class PlayerTrigger : MonoBehaviour 
+public class PlayerTrigger : MonoBehaviour
 {
+    [SerializeField] private PlayerContainer _playerContainer;
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out IPlayerTriggable playerTriggable))
         {
-            playerTriggable.OnPlayerTriggerEnter(this);
+            playerTriggable.OnPlayerTriggerEnter(_playerContainer);
         }
     }
 
@@ -14,7 +15,7 @@ public class PlayerTrigger : MonoBehaviour
     {
         if (other.TryGetComponent(out IPlayerTriggable playerTriggable))
         {
-            playerTriggable.OnPlayerTriggerExit(this);
+            playerTriggable.OnPlayerTriggerExit(_playerContainer);
         }
     }
 }

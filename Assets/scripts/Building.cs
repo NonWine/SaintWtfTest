@@ -3,20 +3,19 @@ using Zenject;
 
 public abstract class Building : MonoBehaviour , IGameControllerTickable
 {
-    [SerializeField] protected Storage outputStorage;  // Вихідний склад
-    [SerializeField] protected BuildingConfigSO config; // Конфігурація фабрики через ScriptableObject
+    [SerializeField] protected Storage outputStorage;  
     [Inject] protected GameController _gameController;
-    protected IProductionStrategy productionStrategy;    // Стратегія виробництва
-
-    public Storage OutputStorage => outputStorage;
-    public BuildingConfigSO Config => config;
-
+    protected IProductionStrategy productionStrategy;
     private float productionTimer;
+    
+    public Storage OutputStorage => outputStorage;
+    
+    public abstract BuildingConfigSO Config { get; }
 
     protected virtual void Start()
     {
-        productionTimer = config.ProductionTime;
-        outputStorage.Init(config.ProducedResource, _gameController.PickUpAnimationTweenConfig);
+        productionTimer = Config.ProductionTime;
+        outputStorage.Init(Config.ProducedResource, _gameController.PickUpAnimationTweenConfig);
         _gameController.RegisterInTick(this);
     }
 
@@ -28,8 +27,9 @@ public abstract class Building : MonoBehaviour , IGameControllerTickable
             if (productionTimer <= 0f)
             {
                 productionStrategy.Produce(this);
-                productionTimer = config.ProductionTime; // Скидаємо таймер
+                productionTimer = Config.ProductionTime; // Скидаємо таймер
             }
         }    
     }
+
 }

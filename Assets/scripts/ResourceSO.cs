@@ -6,5 +6,5 @@ public class ResourceSO : ScriptableObject
     public ResourceType Type;
     public Sprite Icon;
     public Color Color;
-    public GameObject Object;
+    public ResourceObj Object;
 }

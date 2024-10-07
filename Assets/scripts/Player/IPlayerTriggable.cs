@@ -1,6 +1,6 @@
 ﻿public interface IPlayerTriggable
 {
-    void OnPlayerTriggerEnter(PlayerTrigger playerContainer);
+    void OnPlayerTriggerEnter(PlayerContainer playerContainer);
 
-    void OnPlayerTriggerExit(PlayerTrigger playerContainer);
+    void OnPlayerTriggerExit(PlayerContainer playerContainer);
 }

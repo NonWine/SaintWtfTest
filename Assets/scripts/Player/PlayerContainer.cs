@@ -9,6 +9,9 @@ public class PlayerContainer : MonoBehaviour
     [SerializeField] private Transform _body;
     [SerializeField] private Animator _player;
     [SerializeField] private PlayerStats _playerStats;
+    
+    [field: SerializeField] public PlayerResourceStack PlayerResourceStack { get; private set; }
+    
     [Inject] private Joystick _joystick;
     private Vector3 _direction;
 

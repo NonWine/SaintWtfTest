@@ -2,12 +2,16 @@
 
 public class AdvancedBuilding : Building
 {
-    [SerializeField] protected Storage[] inputStorages; // Масив вхідних складів
-
+    [SerializeField] private Storage[] inputStorage;
+    [SerializeField] private AdvancedBuildingConfig _config;
+    
+    public override BuildingConfigSO Config => _config;
+    
     protected override void Start()
     {
         base.Start();
-        // Встановлюємо стратегію, яка працює з вхідними складами
-        productionStrategy = new InputStorageProductionStrategy(inputStorages);
+        productionStrategy = new InputStorageProductionStrategy(inputStorage, _config.RequiredResources);
     }
+    
 }
+
