@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6955890c5b47481badcecaa3a933c3a2, type: 3}
   m_Name: Animation 1
   m_EditorClassIdentifier: 
-  Duration: 0.25
-  JumpStrenght: 2
+  Duration: 0.15
+  JumpStrenght: 1
   JumpCount: 1
-  Ease: 28
+  Ease: 27

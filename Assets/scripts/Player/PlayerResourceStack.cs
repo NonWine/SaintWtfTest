@@ -8,12 +8,12 @@ using Zenject;
 public class PlayerResourceStack : MonoBehaviour
 {
     [Inject] private GameController _gameController;
-
+    [Inject] private ObjectPoolResources _objectPoolResources;
     [SerializeField] private List<ResourceStackSkin> collectedResources;
 
     private PickUpAnimationTween _animationTween => _gameController.PickUpAnimationTweenConfig;
 
-    public List<ResourceStackSkin> AllResources => collectedResources.FindAll(x => x.ResourceObj != null);
+    public List<ResourceStackSkin> AllResources => collectedResources.FindAll(x => x.gameObject.activeSelf);
     
     public bool HasSpace => collectedResources.Find(x => x.gameObject.activeSelf == false) != null;
     
@@ -21,7 +21,7 @@ public class PlayerResourceStack : MonoBehaviour
     public bool HaveResource(ResourceType resourceType)
     {
         return  AllResources.Find(x =>
-            x.gameObject.activeSelf && x.ResourceObj.ResourceType == resourceType);
+            x.gameObject.activeSelf && x.CurrentResource == resourceType);
     }
     
     private void OnValidate()
@@ -32,7 +32,8 @@ public class PlayerResourceStack : MonoBehaviour
     public void AddResourceToStack(ResourceObj resource)
     {
         ResourceObj resourceObj =
-            Instantiate(resource, resource.transform.position, Quaternion.identity);
+            _objectPoolResources.SpawnResource(resource, resource.transform, Quaternion.identity);
+        resourceObj.gameObject.SetActive(true);
         var lastIndex = collectedResources.FindIndex(x => x.gameObject.activeSelf == false);
 
         
@@ -40,7 +41,7 @@ public class PlayerResourceStack : MonoBehaviour
             _animationTween.JumpStrenght, _animationTween.JumpCount, _animationTween.Duration)
             .OnComplete(() =>
         {
-            collectedResources[lastIndex].SetUpResourceView(resourceObj);
+            collectedResources[lastIndex].SetUpResourceView(resourceObj.ResourceType);
             collectedResources[lastIndex].gameObject.SetActive(true);
             resourceObj.gameObject.SetActive(false);
         });
@@ -50,16 +51,17 @@ public class PlayerResourceStack : MonoBehaviour
         if(storagable.HasSpace() == false)
             return;
         
-        var resourceindex = AllResources.FindLastIndex(x => x.ResourceObj.ResourceType == resourceObj.ResourceType && x.gameObject.activeSelf);
+        var resourceindex = AllResources.FindLastIndex(x => x.CurrentResource == resourceObj.ResourceType && x.gameObject.activeSelf);
         
         ResourceObj resource =
-            Instantiate(resourceObj,  collectedResources[resourceindex].transform.position, Quaternion.identity);
-        
+            _objectPoolResources.SpawnResource(resourceObj,  collectedResources[resourceindex].transform, Quaternion.identity);
+        resource.gameObject.SetActive(true);
         collectedResources[resourceindex].gameObject.SetActive(false);
         resource.transform.DOMove(resourceObj.transform.position, 
                _animationTween.Duration)
             .OnComplete(() =>
             {
+                resource.gameObject.SetActive(false);
                 storagable.Store();
             });
         
@@ -74,7 +76,7 @@ public class PlayerResourceStack : MonoBehaviour
             if (!collectedResources[i + 1].gameObject.activeSelf)
                 break; 
         
-            collectedResources[i].SetUpResourceView(collectedResources[i + 1].ResourceObj);
+            collectedResources[i].SetUpResourceView(collectedResources[i + 1].CurrentResource);
             collectedResources[i].gameObject.SetActive(true);
             collectedResources[i + 1].gameObject.SetActive(false);
         }

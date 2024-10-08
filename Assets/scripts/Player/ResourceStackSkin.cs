@@ -1,19 +1,27 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class ResourceStackSkin : MonoBehaviour
 {
-    [SerializeField] private MeshRenderer _meshRendererResourceView;
-    [SerializeField] private MeshFilter _meshFilter;
-    private ResourceObj _resourceObj;
-    public GameObject ResourceBody => _meshRendererResourceView.gameObject;
+    [SerializeField] private List<ResourceObj> _resourceObjs;
 
-    public ResourceObj ResourceObj => _resourceObj;
+    public ResourceType CurrentResource { get; private set; }
     
-    public void SetUpResourceView(ResourceObj resourceObj)
+    public ResourceObj CurrentResourceObj { get; private set; }
+    
+    public void SetUpResourceView(ResourceType ResourceType)
     {
-        _meshRendererResourceView = resourceObj.MeshRenderer;
-        _meshFilter.mesh = resourceObj.MeshFilter.mesh;
-        _resourceObj = resourceObj;
+        foreach (var resourceObj in _resourceObjs)
+        {
+            resourceObj.gameObject.SetActive(false);
+            if (resourceObj.ResourceType == ResourceType)
+            {
+                resourceObj.gameObject.SetActive(true);
+                CurrentResourceObj = resourceObj;
+                CurrentResource = resourceObj.ResourceType;
+            }
+        }
     }
+    
     
 }
