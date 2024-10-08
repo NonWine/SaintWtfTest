@@ -2,10 +2,10 @@
 
 public class InputStorageProductionStrategy : IProductionStrategy
 {
-    private Storage[] _inputStorages;
+    private StorageInput[] _inputStorages;
     private ResourceSO[] _requiredResources;
     
-    public InputStorageProductionStrategy(Storage[] inputStorages, ResourceSO[] requiredResources)
+    public InputStorageProductionStrategy(StorageInput[] inputStorages, ResourceSO[] requiredResources)
     {
         this._inputStorages = inputStorages;
         _requiredResources = requiredResources;
@@ -13,6 +13,7 @@ public class InputStorageProductionStrategy : IProductionStrategy
 
     public bool CanProduce(Building building)
     {
+        
         foreach (var storage in _inputStorages)
         {
             if (storage.CurrentAmount == 0)
@@ -25,6 +26,7 @@ public class InputStorageProductionStrategy : IProductionStrategy
     {
         foreach (var storage in _inputStorages)
         {
+            Debug.Log("ConsumeTimeUpdate");
             storage.TryConsume();
         }
         building.OutputStorage.Store();

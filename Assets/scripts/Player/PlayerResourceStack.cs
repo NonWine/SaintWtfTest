@@ -13,7 +13,16 @@ public class PlayerResourceStack : MonoBehaviour
 
     private PickUpAnimationTween _animationTween => _gameController.PickUpAnimationTweenConfig;
 
+    public List<ResourceStackSkin> AllResources => collectedResources.FindAll(x => x.ResourceObj != null);
+    
     public bool HasSpace => collectedResources.Find(x => x.gameObject.activeSelf == false) != null;
+    
+
+    public bool HaveResource(ResourceType resourceType)
+    {
+        return  AllResources.Find(x =>
+            x.gameObject.activeSelf && x.ResourceObj.ResourceType == resourceType);
+    }
     
     private void OnValidate()
     {
@@ -22,27 +31,52 @@ public class PlayerResourceStack : MonoBehaviour
 
     public void AddResourceToStack(ResourceObj resource)
     {
+        ResourceObj resourceObj =
+            Instantiate(resource, resource.transform.position, Quaternion.identity);
         var lastIndex = collectedResources.FindIndex(x => x.gameObject.activeSelf == false);
-       // if (lastIndex == -1)
-         //   lastIndex = 0;
+
         
-        resource.transform.DOJump(collectedResources[lastIndex ].transform.position, 
+        resourceObj.transform.DOJump(collectedResources[lastIndex ].transform.position, 
             _animationTween.JumpStrenght, _animationTween.JumpCount, _animationTween.Duration)
             .OnComplete(() =>
         {
-            resource.gameObject.SetActive(false);
-            collectedResources[lastIndex].SetUpResourceView(resource);
+            collectedResources[lastIndex].SetUpResourceView(resourceObj);
             collectedResources[lastIndex].gameObject.SetActive(true);
+            resourceObj.gameObject.SetActive(false);
         });
     }
+    public void RemoveResourceFromStack(ResourceObj resourceObj, IStoragable storagable)
+    {
+        if(storagable.HasSpace() == false)
+            return;
+        
+        var resourceindex = AllResources.FindLastIndex(x => x.ResourceObj.ResourceType == resourceObj.ResourceType && x.gameObject.activeSelf);
+        
+        ResourceObj resource =
+            Instantiate(resourceObj,  collectedResources[resourceindex].transform.position, Quaternion.identity);
+        
+        collectedResources[resourceindex].gameObject.SetActive(false);
+        resource.transform.DOMove(resourceObj.transform.position, 
+               _animationTween.Duration)
+            .OnComplete(() =>
+            {
+                storagable.Store();
+            });
+        
+        ShiftResourcesDown(resourceindex);
 
-    // // Метод для видалення ресурсу з стека (наприклад, під час використання або доставки)
-    // public GameObject RemoveResourceFromStack()
-    // {
-    //     if (collectedResources.Count > 0)
-    //     {
-    //         return collectedResources.Pop();
-    //     }
-    //     return null;
-    // }
+    }
+    
+    private void ShiftResourcesDown(int startIndex)
+    {
+        for (int i = startIndex; i < collectedResources.Count - 1; i++)
+        {
+            if (!collectedResources[i + 1].gameObject.activeSelf)
+                break; 
+        
+            collectedResources[i].SetUpResourceView(collectedResources[i + 1].ResourceObj);
+            collectedResources[i].gameObject.SetActive(true);
+            collectedResources[i + 1].gameObject.SetActive(false);
+        }
+    }
 }

@@ -1,20 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class Storage : MonoBehaviour , IStoragable
 {
-    [SerializeField] private List<Transform> _visualResources;
-    [SerializeField] private ResourceCollector _resourceCollector;
-    public int CurrentAmount => _visualResources.FindAll(x => x.gameObject.activeSelf).Count;
+    [SerializeField] protected List<ResourceObj> _visualResources;
     
+
+    public int CurrentAmount => _visualResources.FindAll(x => x.gameObject.activeSelf).Count;
+
+
+    public List<ResourceObj> ResourceObjs => _visualResources;
+
     public int Capacity => _visualResources.Count;
     
-    public int LastResourceIndex => _visualResources.FindLastIndex(x => x.gameObject.activeSelf);
-
-    public void Init(ResourceSO resourceSo, PickUpAnimationTween pickUpAnimationTween)
+    public int LastVisualResourceIndex()
     {
-        _resourceCollector.Init(this,resourceSo, pickUpAnimationTween);
+        int index = _visualResources.FindLastIndex(x => x.gameObject.activeSelf);
+        if (index == -1)
+            index = 0;
+
+        return index;
+    } 
+    
+    public int FirstDisabledIndex()
+    {
+        int index = _visualResources.FindIndex(x => x.gameObject.activeSelf == false);
+        if (index == -1)
+            index = _visualResources.Count - 1;
+
+        return index;
+    } 
+    public void Init(ResourceSO resourceSo)
+    {
+        ResourceSo = resourceSo;
     }
     
     public bool HasSpace()
@@ -22,23 +42,24 @@ public class Storage : MonoBehaviour , IStoragable
         return CurrentAmount < Capacity;
     }
 
-    public void Store()
+    public virtual void Store()
     {
         if (!HasSpace())
             return;
-        _visualResources[LastResourceIndex + 1].gameObject.SetActive(true);
+        _visualResources[FirstDisabledIndex()].gameObject.SetActive(true);
     }
 
-    public GameObject TryConsume()
+    public ResourceObj TryConsume()
     {
         if (CurrentAmount > 0)
         {
-            var obj = _visualResources[LastResourceIndex].gameObject;
-            _visualResources[LastResourceIndex].gameObject.SetActive(false);
+            var obj = _visualResources[LastVisualResourceIndex()];
+            _visualResources[LastVisualResourceIndex()].gameObject.SetActive(false);
             return obj;
         }
 
         return null;
     }
 
+    public ResourceSO ResourceSo { get; set; }
 }

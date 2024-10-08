@@ -11,4 +11,9 @@ public class Building1 : Building
         base.Start();
         productionStrategy = new NoInputStorageProductionStrategy();
     }
+
+    public override bool IsStorageHandlerBusy()
+    {
+        return _outputStorageHandler.isBusy;
+    }
 }
