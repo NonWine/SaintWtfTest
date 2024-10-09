@@ -1,4 +1,6 @@
-﻿public class OutputStorage : Storage
+﻿using UnityEngine;
+
+public class OutputStorage : Storage
 {
     
 }

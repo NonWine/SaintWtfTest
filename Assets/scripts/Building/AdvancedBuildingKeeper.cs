@@ -7,7 +7,7 @@ public class AdvancedBuildingKeeper : MonoBehaviour
     [SerializeField] private InputStorage[] _inputStorages;
     [SerializeField] private StorageInputHandler _storageInputHandler;
     
-    public Storage[] InputStorageses => _inputStorages;
+    public InputStorage[] InputStorageses => _inputStorages;
     
     public void Init(ResourceSO[] resourceSos)
     {

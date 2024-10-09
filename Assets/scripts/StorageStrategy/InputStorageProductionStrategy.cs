@@ -2,23 +2,34 @@
 
 public class InputStorageProductionStrategy : IProductionStrategy
 {
-    private IStoragable[] _inputStorages;
+    private InputStorage[] _inputStorages;
+
     
-    public InputStorageProductionStrategy(IStoragable[] inputStorages)
+    public InputStorageProductionStrategy(InputStorage[] inputStorages )
     {
         this._inputStorages = inputStorages;
+
+        
     }
 
     public bool CanProduce(Building building)
     {
         
+        return !CheckStoragesForEmpty() && building.OutputStorage.HasSpace();
+    }
+
+    private bool CheckStoragesForEmpty()
+    {
         foreach (var storage in _inputStorages)
         {
             if (storage.IsEmpty())
-                return false;
+                return true;
         }
-        return building.OutputStorage.HasSpace();
+
+        return false;
     }
+    
+
 
     public void Produce(Building building)
     {
@@ -29,4 +40,12 @@ public class InputStorageProductionStrategy : IProductionStrategy
         }
         building.OutputStorage.Store();
      }
+
+    public void OnDestroy()
+    {
+        
+    }
 }
+
+
+

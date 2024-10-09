@@ -8,7 +8,7 @@ using Zenject;
 public class CameraFollowing : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera _virtualCamera;
-
+   
     public void Init(Transform transform)
     {
        _virtualCamera.Follow = transform;

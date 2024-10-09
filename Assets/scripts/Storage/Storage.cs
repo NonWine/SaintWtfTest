@@ -6,6 +6,10 @@ using UnityEngine;
 public class Storage : MonoBehaviour , IStoragable
 {
     [SerializeField] protected List<ResourceStackSkin> _visualResources;
+
+    public event Action OnStore;
+
+    public event Action OnConsume;
     
     public int CurrentAmount => _visualResources.FindAll(x => x.gameObject.activeSelf).Count;
     
@@ -61,6 +65,7 @@ public class Storage : MonoBehaviour , IStoragable
         if (!HasSpace())
             return;
         _visualResources[LastVisualDisableResourceIndex()].gameObject.SetActive(true);
+        OnStore?.Invoke();
     }
 
     public ResourceObj TryConsume()
@@ -69,6 +74,7 @@ public class Storage : MonoBehaviour , IStoragable
         {
             var obj = _visualResources[LastVisuaEnablelResourceIndex()];
             _visualResources[LastVisuaEnablelResourceIndex()].gameObject.SetActive(false);
+            OnConsume?.Invoke();
             return obj.CurrentResourceObj;
         }
 

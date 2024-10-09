@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 [RequireComponent(typeof(AdvancedBuildingKeeper))]
 public class AdvancedBuilding : Building
@@ -12,6 +13,7 @@ public class AdvancedBuilding : Building
         base.Start();
         _advancedBuildingKeeper.Init(_buildingConfig.RequiredResources);
         _ProductionStrategy = new InputStorageProductionStrategy(_advancedBuildingKeeper.InputStorageses);
+        
     }
     
 }

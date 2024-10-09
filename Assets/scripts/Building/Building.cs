@@ -21,7 +21,9 @@ public abstract class Building : MonoBehaviour , IGameControllerTickable
         _OutputStorage.Init(Config.ProducedResource);
         _OutputStorageHandler.Init(_OutputStorage);
         _GameController.RegisterInTick(this);
+        
     }
+    
 
     private void OnValidate()
     {
@@ -40,8 +42,6 @@ public abstract class Building : MonoBehaviour , IGameControllerTickable
             }
         }    
     }
+    
 
 }
-
-
-
